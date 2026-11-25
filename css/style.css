@@ -483,16 +483,7 @@ html:not(.js) .menu-toggle { display: none; }
   grid-row: 1 / 4;
   align-self: start;
 }
-.hero-photo {
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  background: var(--milk-deep);
-}
-.hero-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.hero-photo { aspect-ratio: 4 / 5; flex: none; }
 
 .hero-text {
   grid-column: 1 / 7;
@@ -559,6 +550,43 @@ html:not(.js) .menu-toggle { display: none; }
   margin-bottom: clamp(3rem, 6vw, 5.5rem);
 }
 
+/* ---------- Рамка для фотографий ---------- */
+.frame {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: clamp(0.5rem, 0.9vw, 0.875rem);
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+}
+.frame-img {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--milk-deep);
+}
+.frame-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease-out);
+}
+.frame > .caption {
+  flex: none;
+  margin-top: clamp(0.6rem, 0.9vw, 0.875rem);
+  padding-top: clamp(0.6rem, 0.9vw, 0.875rem);
+  border-top: 1px solid var(--line);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (hover: hover) {
+  .frame:hover .frame-img img { transform: scale(1.03); }
+}
+
 /* ---------- О нас ---------- */
 .about { border-top: 1px solid var(--line); }
 
@@ -566,32 +594,19 @@ html:not(.js) .menu-toggle { display: none; }
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: clamp(1rem, 2vw, 2rem);
+  align-items: start;
 }
-.about-photo img { width: 100%; height: 100%; object-fit: cover; }
-.about-photo--main { display: flex; flex-direction: column; }
-.about-photo--main .about-photo-frame { flex: 1; min-height: 0; overflow: hidden; }
-
-.about-photo--main {
-  grid-column: 1 / 8;
-  grid-row: 1 / 3;
-  align-self: start;
+.about-photos {
+  grid-column: 1 / 9;
+  display: grid;
+  grid-template-columns: 5fr 3fr;
+  gap: clamp(0.75rem, 1.6vw, 1.5rem);
 }
-.about-photo-frame { aspect-ratio: 3 / 2.15; }
-.about-photo--small {
-  grid-column: 6 / 9;
-  grid-row: 2 / 4;
-  margin-top: clamp(10rem, 18vw, 17rem);
-  position: relative;
-  z-index: 1;
-}
-.about-photo--small img {
-  aspect-ratio: 3 / 4;
-  outline: clamp(8px, 1vw, 14px) solid var(--milk);
-}
+.about-photo--main .frame-img { aspect-ratio: 4 / 3.6; }
+.about-photo--main .frame-img img { object-position: 60% 50%; }
 
 .about-text {
   grid-column: 9 / -1;
-  grid-row: 1 / 4;
   padding-left: clamp(0rem, 1.5vw, 1.5rem);
 }
 .about-lead {
@@ -621,24 +636,17 @@ html:not(.js) .menu-toggle { display: none; }
 .fact dd { color: var(--ink-soft); }
 
 @media (max-width: 959px) {
-  .about-photo--main { grid-column: 1 / -1; grid-row: 1; }
-  .about-photo--small {
-    grid-column: 7 / -1;
-    grid-row: 2;
-    margin-top: -22%;
-  }
+  .about-photos { grid-column: 1 / -1; }
   .about-text {
     grid-column: 1 / -1;
-    grid-row: 3;
     padding-left: 0;
     margin-top: 3rem;
     max-width: 40rem;
   }
 }
 @media (max-width: 599px) {
-  .about-photo--small { grid-column: 5 / -1; margin-top: -18%; }
-  .about-photo--main .about-photo-frame { aspect-ratio: 4 / 3.4; }
-  .about-photo--main img { object-position: 30% 50%; }
+  .about-photos { grid-template-columns: 1fr 1fr; }
+  .about-photo--main .frame-img { aspect-ratio: 3 / 4; }
 }
 
 /* ---------- Меню ---------- */
@@ -784,47 +792,40 @@ html:not(.js) .menu-toggle { display: none; }
 }
 
 .gallery {
-  --u: clamp(3.25rem, 6.2vw, 5.4rem);
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-auto-rows: var(--u);
   gap: clamp(0.75rem, 1.6vw, 1.5rem);
 }
-.g-item {
-  overflow: hidden;
-  background: var(--milk-deep);
-}
-.g-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 1.2s var(--ease-out);
-}
-@media (hover: hover) {
-  .g-item:hover img { transform: scale(1.035); }
-}
+/* Ряд 1: широкий кадр + вертикальный, одинаковой высоты */
+.g-a { grid-column: 1 / 9; }
+.g-b { grid-column: 9 / 13; }
+.g-a .frame-img { aspect-ratio: 3 / 2; }
+/* Ряд 2: три равных квадрата */
+.g-c { grid-column: 1 / 5; }
+.g-d { grid-column: 5 / 9; }
+.g-e { grid-column: 9 / 13; }
+.g-c .frame-img,
+.g-d .frame-img,
+.g-e .frame-img { aspect-ratio: 1 / 1; }
+/* Ряд 3: панорама на всю ширину */
+.g-f { grid-column: 1 / -1; }
+.g-f .frame-img { aspect-ratio: 21 / 8; }
 
-.g-a { grid-column: 1 / 8;  grid-row: 1 / 7; }
-.g-b { grid-column: 8 / 13; grid-row: 2 / 10; }
-.g-c { grid-column: 2 / 5;  grid-row: 7 / 11; }
-.g-d { grid-column: 5 / 8;  grid-row: 7 / 10; }
-.g-e { grid-column: 9 / 13; grid-row: 10 / 15; }
-.g-f { grid-column: 1 / 9;  grid-row: 11 / 16; }
 .g-b img { object-position: 50% 60%; }
-.g-c img { object-position: 45% 70%; }
+.g-c img { object-position: 35% 70%; }
+.g-d img { object-position: 50% 50%; }
 
-@media (max-width: 759px) {
-  .gallery {
-    --u: 22vw;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .g-a { grid-column: 1 / 3; grid-row: 1 / 4; }
-  .g-b { grid-column: 1 / 2; grid-row: 4 / 8; }
-  .g-c { grid-column: 2 / 3; grid-row: 4 / 6; }
-  .g-d { grid-column: 2 / 3; grid-row: 6 / 8; }
-  .g-e { grid-column: 2 / 3; grid-row: 8 / 12; }
-  .g-f { grid-column: 1 / 2; grid-row: 8 / 12; }
-  .g-f img { object-position: 30% 50%; }
+@media (max-width: 599px) {
+  .gallery { grid-template-columns: 1fr 1fr; }
+  .g-a, .g-f { grid-column: 1 / -1; }
+  .g-b, .g-c, .g-d, .g-e { grid-column: auto; }
+  .g-a .frame-img { aspect-ratio: 4 / 3; }
+  .g-b .frame-img,
+  .g-c .frame-img,
+  .g-d .frame-img,
+  .g-e .frame-img { aspect-ratio: 3 / 4; }
+  .g-f .frame-img { aspect-ratio: 4 / 3; }
+  .g-f img { object-position: 35% 50%; }
 }
 
 /* ---------- Контакты ---------- */
@@ -986,3 +987,8 @@ html:not(.js) .menu-toggle { display: none; }
 
 /* Программный фокус разделов при переходе по якорю — без рамки */
 [tabindex="-1"]:focus { outline: none; }
+
+/* На узких экранах подписи в рамках — без номеров, чтобы помещались в одну строку */
+@media (max-width: 599px) {
+  .frame > .caption span { display: none; }
+}
